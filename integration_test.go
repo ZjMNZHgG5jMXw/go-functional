@@ -1,6 +1,7 @@
 package functional
 
 import (
+	"bytes"
 	"fmt"
 	"io"
 	"io/ioutil"
@@ -25,7 +26,7 @@ func TestComposeCurried(t *testing.T) {
 	}
 }
 
-func TestHttpGet(t *testing.T) {
+func TestDoReadAll(t *testing.T) {
 	var (
 		client = http.Client{}
 		ts     = httptest.NewServer(
@@ -49,6 +50,45 @@ func TestHttpGet(t *testing.T) {
 		http.NewRequest)
 
 	actual, err := doReadAll(http.MethodGet, ts.URL, nil)
+	if err != nil {
+		t.Error(err)
+	}
+
+	if string(actual) != "test server responding" {
+		t.Errorf("expected \"test server responding\", got \"%s\"", actual)
+	}
+}
+
+func TestHttpGet(t *testing.T) {
+	var (
+		client = http.Client{}
+		ts     = httptest.NewServer(
+			http.HandlerFunc(
+				func(rw http.ResponseWriter, req *http.Request) {
+					fmt.Fprint(rw, "test server responding")
+				}))
+
+		readBody = func(resp *http.Response) ([]byte, error) {
+			defer resp.Body.Close()
+			return ioutil.ReadAll(resp.Body)
+		}
+
+		getReadAll func(string) ([]byte, error)
+	)
+	defer ts.Close()
+
+	AssignComposed(&getReadAll,
+		readBody,
+		client.Do,
+		Apply(
+			Flip(
+				Curry(
+					Apply(
+						Curry(http.NewRequest),
+						http.MethodGet))),
+			bytes.NewReader(nil)))
+
+	actual, err := getReadAll(ts.URL)
 	if err != nil {
 		t.Error(err)
 	}

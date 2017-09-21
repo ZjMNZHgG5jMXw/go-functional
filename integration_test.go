@@ -36,7 +36,7 @@ func TestDoReadAll(t *testing.T) {
 				}))
 
 		readBody = func(resp *http.Response) ([]byte, error) {
-			defer resp.Body.Close()
+			defer func() { _ = resp.Body.Close() }()
 			return ioutil.ReadAll(resp.Body)
 		}
 
@@ -69,7 +69,7 @@ func TestHttpGet(t *testing.T) {
 				}))
 
 		readBody = func(resp *http.Response) ([]byte, error) {
-			defer resp.Body.Close()
+			defer func() { _ = resp.Body.Close() }()
 			return ioutil.ReadAll(resp.Body)
 		}
 

@@ -5,6 +5,7 @@ import (
 )
 
 var (
+	// AssignMap creates and assignes a map function for a given function to be mapped
 	AssignMap func(sun, fun interface{})
 )
 
@@ -12,6 +13,7 @@ func init() {
 	MakeAssignment(&AssignMap, Map)
 }
 
+// MakeMap creates a generic map function
 func MakeMap(fun interface{}) {
 	funT := reflect.TypeOf(fun).Elem()
 	gunT := funT.In(0)
@@ -39,6 +41,7 @@ func MakeMap(fun interface{}) {
 	reflect.ValueOf(fun).Elem().Set(sunV)
 }
 
+// Map returns a map function for a given function to be mapped
 func Map(fun interface{}) interface{} {
 	funT := reflect.TypeOf(fun)
 	runT := reflect.FuncOf(

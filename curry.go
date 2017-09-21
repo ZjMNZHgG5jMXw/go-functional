@@ -53,7 +53,7 @@ func Curry(fun interface{}) (curried interface{}) {
 	return
 }
 
-// (a -> b -> c) -> (a, b) -> c
+// Uncurry :: (a -> b -> c) -> (a, b) -> c
 func Uncurry(fun interface{}) (uncurried interface{}) {
 	// check function type
 	funT := reflect.TypeOf(fun)

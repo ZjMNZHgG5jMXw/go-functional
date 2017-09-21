@@ -13,7 +13,7 @@ const (
 	KeepPointerMode
 )
 
-// Assign transforms fun in an assignment
+// MakeAssignment transforms fun in an assignment
 // and stores it to sun.
 func MakeAssignment(sun, fun interface{}, mode ...pointerMode) {
 	var (

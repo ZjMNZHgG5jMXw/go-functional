@@ -4,6 +4,7 @@ import (
 	"reflect"
 )
 
+// MakeFoldr creates a right fold function
 func MakeFoldr(fun interface{}) {
 	funT := reflect.TypeOf(fun).Elem()
 	gunT := funT.In(0)
@@ -30,6 +31,7 @@ func MakeFoldr(fun interface{}) {
 	reflect.ValueOf(fun).Elem().Set(sunV)
 }
 
+// MakeFoldl creates a left fold function
 func MakeFoldl(fun interface{}) {
 	funT := reflect.TypeOf(fun).Elem()
 	gunT := funT.In(0)

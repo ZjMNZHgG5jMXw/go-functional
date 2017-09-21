@@ -29,3 +29,29 @@ func MakeFoldr(fun interface{}) {
 		})
 	reflect.ValueOf(fun).Elem().Set(sunV)
 }
+
+func MakeFoldl(fun interface{}) {
+	funT := reflect.TypeOf(fun).Elem()
+	gunT := funT.In(0)
+	sunT := reflect.FuncOf(
+		[]reflect.Type{
+			reflect.FuncOf(
+				[]reflect.Type{gunT.In(0), gunT.In(1)},
+				[]reflect.Type{gunT.In(0)},
+				false),
+			gunT.In(0),
+			reflect.SliceOf(gunT.In(1))},
+		[]reflect.Type{gunT.In(0)},
+		false)
+
+	sunV := reflect.MakeFunc(
+		sunT,
+		func(args []reflect.Value) []reflect.Value {
+			res := args[1]
+			for i := 0; i < args[2].Len(); i++ {
+				res = args[0].Call([]reflect.Value{res, args[2].Index(i)})[0]
+			}
+			return []reflect.Value{res}
+		})
+	reflect.ValueOf(fun).Elem().Set(sunV)
+}
